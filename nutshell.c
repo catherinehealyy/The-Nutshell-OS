@@ -1,70 +1,42 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "global.h"
+#include <string.h>
+#include <unistd.h>
 
-#define BYE 0
-#define ERRORS 1
-#define OK 2
 
-unsigned char command_buf[500];
+char *getcwd(char *buf, size_t size);
+int yyparse();
 
 void shell_init(void){
-	return;
-}
-void getCommand(char** input){
-	/*init_scanner_and_parser();
-	if(yyparse()){
-		understand_errors();
-	}
-	else{
-		return OK;
-	}*/
-}
-void recover_from_errors(void){
-	return;
-}
-void processCommand(void){
-	return;
-}
-void do_it(){
-	return;
+    aliasIndex = 0;
+    varIndex = 0;
+
+    getcwd(cwd, sizeof(cwd));
+
+    strcpy(varTable.var[varIndex], "PWD");
+    strcpy(varTable.word[varIndex], cwd);
+    varIndex++;
+    strcpy(varTable.var[varIndex], "HOME");
+    strcpy(varTable.word[varIndex], cwd);
+    varIndex++;
+    strcpy(varTable.var[varIndex], "PROMPT");
+    strcpy(varTable.word[varIndex], "nutshell~dc$");
+    varIndex++;
+    strcpy(varTable.var[varIndex], "PATH");
+    strcpy(varTable.word[varIndex], ".:/bin");
+    varIndex++;
+
+    system("clear");
 }
 void printPrompt(){
-	printf("nutshell~cd$ ");
+     printf("[%s]>> ", varTable.word[2]);
 }
-void execute_it(){/*
-	if(! Executable()){
-		//use access() system call
-		nuterr("Command not Found");
-		return;
-	}
-	//check io file existance in case of I/O redirection
-	if(check_in_file() == SYSERR){
-		nuterr("Can't read from : %s", srcf);
-		return;
-	}
-	if(check_out_file() == SYSERR){
-		nuterr("Can't write to : %s", distf);
-		return;
-	}
-	//build up pipeline 
-	//process background*/
-}
-
-int main(int ac __attribute__((unused)), char **av __attribute__((unused))){
-	//shell_init();
+int main(){
+	shell_init();	
 	while(1){
 		printPrompt();
-		gets(command_buf);
-		/*char** CMD = getCommand(stdin);
-		if(CMD == BYE){
-			exit();
-		}
-		else if(CMD == ERRORS){
-			recover_from_errors();
-		}
-		else if(CMD == OK){
-			processCommand();
-		}*/
+		yyparse();
 	}
 }
