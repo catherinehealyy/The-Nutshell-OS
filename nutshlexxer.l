@@ -1,11 +1,10 @@
-%{
- 
-#include "nutshparser.tab.h"
+%{ 
+#include "parser.tab.h"
 #include <string.h>
 #include "global.h"
 #include <stdbool.h>
 
-#define unput(c) {yytchar= (c); if(yytchar=='\n') {yylineno--; *yysptr++=yytchar;}
+//#define unput(c) {yytchar= (c); if(yytchar=='\n') {yylineno--; *yysptr++=yytchar;}
 char* subAliases(char* name){
     for (int i = 0; i < aliasIndex; i++) {
         if(strcmp(aliasTable.name[i], name) == 0) {
@@ -36,6 +35,8 @@ ANYCHAR            [)(*&%$#@!`;,\.a-zA-Z0-9'/*_=~ -][)(*&%$#@!`;,\.a-zA-Z0-9'/*_
 <string_condition>[\"]          {BEGIN(INITIAL);}
 
 [ ]		            { }
+printenv            { return PRINTENV; }
+setenv              { return SETENV; }
 bye                 { return BYE; }
 cd		            { return CD;}
 alias		        { return ALIAS; }
@@ -55,4 +56,3 @@ alias		        { return ALIAS; }
                     };
                      }
 %%
-
