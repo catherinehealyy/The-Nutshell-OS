@@ -99,22 +99,29 @@ int runSetAlias(char* name, char* word) {
 
 int runPrintEValues() {
 	for (int i = 0; i < varIndex; i++) {
-		printf(varTable.var[i], "=", varTable.word[i]);
+		printf("%s", varTable.var[i]);
+		printf("=");
+		printf("%s", varTable.word[i]);
+		printf("\n");
 	}	
 	return 1;
 }
 
 int runPrintAlias() {
 	for (int i = 0; i < aliasIndex; i++) {
-		printf(aliasTable.name[i])
+		int Asize = sizeof(aliasTable.name[i]) / sizeof(aliasTable.name[i][0]);
+		for(int j = 0; j < Asize; j++){
+			printf("%c", aliasTable.name[i][j]);
+			printf("\n");
+		}
 	}
 	return 1;
 }
 
 int runSetVariable(char* variable, char* word) {
 	for (int i = 0; i < varIndex; i++) {
-		if (strcmp(name, word) == 0) {
-			printf("Error, expansion of \"%s\" would create a loop.\n", name);
+		if (strcmp(variable, word) == 0) {
+			printf("Error, expansion of \"%s\" would create a loop.\n", variable);
 			return 1;
 		}
 		else if ((strcmp(varTable.var[i], variable) == 0) && (strcmp(varTable.word[i], word) == 0)) {
@@ -132,5 +139,3 @@ int runSetVariable(char* variable, char* word) {
 
 	return 1;
 }
-
-
