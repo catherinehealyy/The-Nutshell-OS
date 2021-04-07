@@ -1,15 +1,14 @@
 #include "stdbool.h"
 #include <limits.h>
-#define PATH_MAX 300
 
 struct evTable{
 	char var[128][100];
 	char word[128][100];
-}
+};
 struct aTable {
 	char name[128][100];
 	char word[128][100];
-}
+};
 
 char cwd[PATH_MAX];
 
