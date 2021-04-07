@@ -10,7 +10,7 @@ char *getcwd(char *buf, size_t size);
 int yyparse();
 
 void shell_init(void){
-    aliasIndex = 0;
+	aliasIndex = 0;
     varIndex = 0;
 
     getcwd(cwd, sizeof(cwd));
@@ -19,15 +19,14 @@ void shell_init(void){
     strcpy(varTable.word[varIndex], cwd);
     varIndex++;
     strcpy(varTable.var[varIndex], "HOME");
-    strcpy(varTable.word[varIndex], cwd);
+    strcpy(varTable.word[varIndex], ".:/bin");
     varIndex++;
     strcpy(varTable.var[varIndex], "PROMPT");
     strcpy(varTable.word[varIndex], "nutshell~dc$");
     varIndex++;
     strcpy(varTable.var[varIndex], "PATH");
-    strcpy(varTable.word[varIndex], ".:/bin");
+    strcpy(varTable.word[varIndex], ".:/bin:/usr/bin");
     varIndex++;
-
     system("clear");
 }
 void printPrompt(){
