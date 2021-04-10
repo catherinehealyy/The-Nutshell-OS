@@ -1,5 +1,5 @@
 %{
-	// Only "alias name word", "cd word", "bye" run, "printenv", "alias", "setenv variable word"
+	// Only "alias name word", "cd word", "bye" run, "printenv", "alias", "setenv variable word", "ls"
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -13,20 +13,23 @@
 	int runPrintEValues();
 	int runPrintAlias();
 	int runSetVariable(char* variable, char* word);
+	char* parsePath();
+	int runLS();
 	%}
 
 %union { char* string; }
 
 %start cmd_line
-%token <string> BYE CD STRING ALIAS END PRINTENV SETENV
+%token <string> BYE CD STRING ALIAS END PRINTENV SETENV LS
 
 %%
 cmd_line    :
 BYE END{ exit(1); return 1; }
-| CD STRING END{ runCD($2); return 1; }
 | ALIAS STRING STRING END{ runSetAlias($2, $3); return 1; }
+| CD STRING END{ runCD($2); return 1; }
 | PRINTENV END{ runPrintEValues(); return 1; }
 | ALIAS END{ runPrintAlias(); return 1; }
+| LS END{ runLS(); return 1; }
 | SETENV STRING STRING END{ runSetVariable($2, $3); return 1; }
 
 %%
@@ -34,6 +37,34 @@ BYE END{ exit(1); return 1; }
 int yyerror(char* s) {
 	printf("%s\n", s);
 	return 0;
+}
+
+char* parsePath(char* exeName){
+//https://www.tutorialspoint.com/c_standard_library/c_function_strtok.htm
+	char* token = strtok(varTable.word[3], ":");
+	while(token != NULL){
+		//try to access executable
+		char* temp = strcat(token, "/");
+		temp = strcat(temp, exeName);
+		int fd = access(temp, F_OK);
+		if(fd != -1){
+			fd = access(temp, X_OK);
+			if(fd != -1){
+				return token;
+			}
+		}
+		token = strtok(varTable.word[3], ":");
+	}
+	return NULL;
+}
+
+int runLS() {
+	printf("in run LS");
+	char* arr[2] = {parsePath("ls"), NULL};
+	if(arr[0] != NULL){
+		execv(arr[0], arr);
+		printf("Path found %s", arr[0]);
+	}
 }
 
 int runCD(char* arg) {
@@ -112,8 +143,8 @@ int runPrintAlias() {
 		int Asize = sizeof(aliasTable.name[i]) / sizeof(aliasTable.name[i][0]);
 		for(int j = 0; j < Asize; j++){
 			printf("%c", aliasTable.name[i][j]);
-			printf("\n");
 		}
+		printf("\n");
 	}
 	return 1;
 }
