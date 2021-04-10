@@ -39,6 +39,7 @@ printenv            { return PRINTENV; }
 setenv              { return SETENV; }
 bye                 { return BYE; }
 cd		            { return CD;}
+ls                  { return LS;}
 alias		        { return ALIAS; }
 "\n"		        { return END; }
 [\"]                 { BEGIN(string_condition); }
