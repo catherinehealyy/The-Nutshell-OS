@@ -9,6 +9,11 @@ struct aTable {
 	char name[128][100];
 	char word[128][100];
 };
+struct comTable {
+	char com[128][100];
+	char input[128][100];
+	char output[128][100];
+};
 
 char cwd[PATH_MAX];
 
