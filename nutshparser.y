@@ -8,13 +8,14 @@
 
 	int yylex();
 	int yyerror(char* s);
+	char* parsePath();
+	int runLS();
 	int runCD(char* arg);
 	int runSetAlias(char* name, char* word);
 	int runPrintEValues();
 	int runPrintAlias();
 	int runSetVariable(char* variable, char* word);
-	char* parsePath();
-	int runLS();
+	
 	%}
 
 %union { char* string; }
@@ -25,16 +26,17 @@
 %%
 cmd_line    :
 BYE END{ exit(1); return 1; }
-| ALIAS STRING STRING END{ runSetAlias($2, $3); return 1; }
+| LS END{ runLS(); return 1; }
 | CD STRING END{ runCD($2); return 1; }
+| ALIAS STRING STRING END{ runSetAlias($2, $3); return 1; }
 | PRINTENV END{ runPrintEValues(); return 1; }
 | ALIAS END{ runPrintAlias(); return 1; }
-| LS END{ runLS(); return 1; }
 | SETENV STRING STRING END{ runSetVariable($2, $3); return 1; }
 
 %%
 
 int yyerror(char* s) {
+	printf("there's an error");
 	printf("%s\n", s);
 	return 0;
 }
