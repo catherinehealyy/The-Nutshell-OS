@@ -24,12 +24,72 @@ bool ifAlias(char* name){
     }
     return false;
 }
+/*bool ifstrWildcard(char* charStr){
+	for(int i = 0; i < strlen(charStr); i++){
+		if(charStr[i] == '*'){
+			return true;
+		}
+	}
+	return false;
+}
+bool ifcharWildcard(char* charStr){
+	for(int i = 0; i < strlen(charStr); i++){
+		if(charStr[i] == '?'){
+			return true;
+		}
+	}
+	return false;
+}
+char** subcharWildcards(char* charStr){
+	char** matches;
+	int mCount = 0;
+	char** allFiles;
+	char* arr[3] = {parsePath("ls"), "-A1", NULL};
+	pid_t pid;
+	int fd[2];
+	pipe(fd);
+	pid = fork();
+	if(pid == 0){
+		//create process to run LS command and pipe stdout into fd
+		dup2(fd[1], STDOUT_FILENO);
+		close(fd[1]);
+		execv(arr[0], arr);	
+	}
+	else{
+		int aCount = 0;
+		char lsOut[100];
+		char temp [100];
+		int tempCount = 0;
+		read(fd[0], lsOut, 100);
+		for(int i = 0; i < strlen(lsOut); i++){
+			if(lsOut[i] == "\n"){
+				allFiles[aCount] = temp;
+				aCount++;
+				tempCount = 0;
+				temp = {};
+			}
+			else{
+				temp[tempCount] = lsOut[i];
+				tempCount++;
+			}
+		}
+	}
+	for(int i = 0; i < strlen(allFiles); i++){
+		if(fnmatch("*", allFiles[i]) == 0){
+			matches[mCount] = allFiles[i];
+			mCount++;
+		}
+	}
+}
+char** substrWildcards(char* stringy){
+	char** matches;
+}*/
 %}
 %array
 %option noyywrap
 
 CHAR            [.A-Za-z0-9!\/_-][.A-Za-z0-9!\/_-]*
-ANYCHAR            [)(*&%$#@!`;,\.a-zA-Z0-9'/*_=~ -][)(*&%$#@!`;,\.a-zA-Z0-9'/*_=~ -]*
+ANYCHAR            [)(*?&%$#@!`;,\.a-zA-Z0-9'/*_=~ -][)(*?&%$#@!`;,\.a-zA-Z0-9'/*_=~ -]*
 
 %x string_condition
 %%
@@ -55,7 +115,14 @@ ls                  { yylval.string = strdup(yytext); return BASIC; }
                            for ( int i = strlen(subAliases(yytext)) - 1; i >= 0; --i )
                                unput( yycopy[i] );
                            free( yycopy );
-                    } else {
+                    } /*else if(ifstrWildcard(yytext)){
+						printf("string wildcard detected");
+						char** wc = substrWildcards(yytext);
+					}
+					}else if(ifcharWildcard(yytext)){
+						printf("character wildcard detected");
+						char** wc = subcharWildcards(yytext);						
+					}*/else {
                         printf("yytext: %s\n", yytext);
                         yylval.string = strdup(yytext);
                         return STRING;
