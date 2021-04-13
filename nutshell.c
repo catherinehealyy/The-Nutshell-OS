@@ -1,41 +1,64 @@
-
+// This is ONLY a demo micro-shell whose purpose is to illustrate the need for and how to handle nested alias substitutions and Flex start conditions.
+// This is to help students learn these specific capabilities, the code is by far not a complete nutshell by any means.
 #include <stdio.h>
 #include <stdlib.h>
-#include "global.h"
 #include <string.h>
+#include "global.h"
 #include <unistd.h>
-
+#include <linux/limits.h>
 
 char *getcwd(char *buf, size_t size);
 int yyparse();
 
-void shell_init(void){
-	aliasIndex = 0;
+int main()
+{
+    aliasIndex = 0;
     varIndex = 0;
+    bcIndex = 0;
 
+
+    char cwd[PATH_MAX];
     getcwd(cwd, sizeof(cwd));
 
     strcpy(varTable.var[varIndex], "PWD");
     strcpy(varTable.word[varIndex], cwd);
     varIndex++;
     strcpy(varTable.var[varIndex], "HOME");
-    strcpy(varTable.word[varIndex], ".:/bin");
+    strcpy(varTable.word[varIndex], cwd);
     varIndex++;
     strcpy(varTable.var[varIndex], "PROMPT");
-    strcpy(varTable.word[varIndex], "nutshell~dc$");
+    strcpy(varTable.word[varIndex], "nutshell");
     varIndex++;
     strcpy(varTable.var[varIndex], "PATH");
-    strcpy(varTable.word[varIndex], ".:/bin:/usr/bin");
+    strcpy(varTable.word[varIndex], ".:/bin");
     varIndex++;
+
+    //strcpy(aliasTable.name[aliasIndex], ".");
+    //strcpy(aliasTable.word[aliasIndex], cwd);
+    //aliasIndex++;
+
+    //char *pointer = strrchr(cwd, '/');
+    //while(*pointer != '\0') {
+        //*pointer ='\0';
+        //pointer++;
+    //}
+    //strcpy(aliasTable.name[aliasIndex], "..");
+    //strcpy(aliasTable.word[aliasIndex], cwd);
+    //aliasIndex++;
+
+    strcpy(commandTable.command[bcIndex], "");
+    strcpy(commandTable.comArgs[bcIndex], "");
+    strcpy(commandTable.temp[bcIndex], "");
+    strcpy(commandTable.input[bcIndex], "");
+    strcpy(commandTable.output[bcIndex], "");
+    bcIndex++;
+
     system("clear");
-}
-void printPrompt(){
-     printf("[%s]>> ", varTable.word[2]);
-}
-int main(){
-	shell_init();	
-	while(1){
-		printPrompt();
-		yyparse();
-	}
+    while(1)
+    {
+        printf("[%s]>> ", varTable.word[2]);
+        yyparse();
+    }
+
+    return 0;
 }
