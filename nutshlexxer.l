@@ -45,6 +45,7 @@ printenv            { return PRINTENV; }
 setenv              { return SETENV; }
 unsetenv            { return UNSETENV; }
 unalias             { return UNALIAS; }
+ls                  { yylval.string = strdup(yytext); return BASIC; }
 "\n"		        { return END; }
 [\"]                 { BEGIN(string_condition); }
 {CHAR}+              {if(ifAlias(yytext)) {
