@@ -1,4 +1,7 @@
-%{ 
+%{
+// This is ONLY a demo micro-shell whose purpose is to illustrate the need for and how to handle nested alias substitutions and how to use Flex start conditions
+// This is to help students learn these specific capabilities, the code is by far not a complete nutshell by any means.
+// Only "alias name word", "cd word", and "bye" run. 
 #include "parser.tab.h"
 #include <string.h>
 #include "global.h"
@@ -21,47 +24,12 @@ bool ifAlias(char* name){
     }
     return false;
 }
-/*bool ifstrWildcard(char* charStr){
-	for(int i = 0; i < strlen(charStr); i++){
-		if(charStr[i] == '*'){
-			return true;
-		}
-	}
-	return false;
-}
-bool ifcharWildcard(char* charStr){
-	for(int i = 0; i < strlen(charStr); i++){
-		if(charStr[i] == '?'){
-			return true;
-		}
-	}
-	return false;
-}
-char** subcharWildcards(char* charStr){
-	char** matches;
-	pid_t pid;
-	int fd[2];
-	pipe(fd);
-	pid = fork();
-	if(pid == 0){
-		//create process to run LS command and pipe stdout into fd
-		dup2(fd[1], STDOUT_FILENO);
-		close(fd[1]);
-		runLS();
-	}
-	else{
-	
-	}
-}
-char** substrWildcards(char* stringy){
-	char** matches;
-}*/
 %}
 %array
 %option noyywrap
 
 CHAR            [.A-Za-z0-9!\/_-][.A-Za-z0-9!\/_-]*
-ANYCHAR            [)(*?&%$#@!`;,\.a-zA-Z0-9'/*_=~ -][)(*?&%$#@!`;,\.a-zA-Z0-9'/*_=~ -]*   //added ?
+ANYCHAR            [)(*&%$#@!`;,\.a-zA-Z0-9'/*_=~ -][)(*&%$#@!`;,\.a-zA-Z0-9'/*_=~ -]*
 
 %x string_condition
 %%
@@ -71,31 +39,22 @@ ANYCHAR            [)(*?&%$#@!`;,\.a-zA-Z0-9'/*_=~ -][)(*?&%$#@!`;,\.a-zA-Z0-9'/
 
 [ ]		            { }
 bye                 { return BYE; }
-ls					{ return LS; }
-cd		            { return CD; }
+cd		            { return CD;}
 alias		        { return ALIAS; }
 printenv            { return PRINTENV; }
 setenv              { return SETENV; }
+unsetenv            { return UNSETENV; }
+unalias             { return UNALIAS; }
 "\n"		        { return END; }
 [\"]                 { BEGIN(string_condition); }
-{CHAR}+              {
-					if(ifAlias(yytext)) {
+{CHAR}+              {if(ifAlias(yytext)) {
                         printf("yytext before sub: %s\n", yytext);
                         // source: https://www.cs.princeton.edu/~appel/modern/c/software/flex/flex.html
                            char *yycopy = strdup( subAliases(yytext) );
                            for ( int i = strlen(subAliases(yytext)) - 1; i >= 0; --i )
                                unput( yycopy[i] );
                            free( yycopy );
-                    }
-					/*else if(ifstrWildcard(yytext)){
-						printf("string wildcard detected");
-						
-					}
-					}else if(ifcharWildcard(yytext)){
-						printf("character wildcard detected");
-						
-					}*/
-					else {
+                    } else {
                         printf("yytext: %s\n", yytext);
                         yylval.string = strdup(yytext);
                         return STRING;
